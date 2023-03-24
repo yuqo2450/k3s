@@ -1,0 +1,16 @@
+---
+# tasks file for service
+# code: language=ansible
+- name: Install k3s service
+  ansible.builtin.template:
+    dest: /lib/systemd/system/k3s.service
+    src: k3s.service.j2
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Start k3s service
+  ansible.builtin.service:
+    name: k3s.service
+    state: started
+    enabled: true
