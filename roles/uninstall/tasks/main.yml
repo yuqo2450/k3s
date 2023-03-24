@@ -1,0 +1,33 @@
+---
+# tasks file for uninstall
+# code: language=ansible
+- name: Undo prerequisites
+  block:
+    - name: Allow ipv4 forwarding
+      ansible.posix.sysctl:
+        name: net.ipv4.ip_forward
+        value: 1
+        state: absent
+
+    - name: Allow ipv6 forwarding
+      ansible.posix.sysctl:
+        name: net.ipv6.conf.all.forwarding
+        value: 1
+        state: absent
+
+    - name: Accept ipv6 router advertisment
+      ansible.posix.sysctl:
+        name: net.ipv6.conf.all.accept_ra
+        value: 2
+        state: absent
+
+    - name: Load kernel module br_netfilter
+      community.general.modprobe:
+        name: br_netfilter
+        state: absent
+
+- name: Remove k3s binary
+  ansible.builtin.file:
+    path: "{{ bin }}"
+    state: absent
+    mode: 0755
