@@ -1,0 +1,26 @@
+---
+# tasks file for config
+# code: language=ansible
+- name: Ensure k3s config directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  loop:
+    - /var/lib/rancher/k3s/server/manifests
+    - /var/lib/rancher/k3s/server
+    - /var/lib/rancher/k3s
+    - /var/lib/rancher
+    - /etc/rancher/k3s/config.yaml.d
+    - /etc/rancher/k3s
+    - /etc/rancher
+
+- name: Configure k3s
+  ansible.builtin.template:
+    dest: /etc/rancher/k3s/config.yaml.d/00_default.yaml
+    src: 00_default.yaml.j2
+    owner: root
+    group: root
+    mode: 0644

@@ -1,0 +1,34 @@
+---
+{% if 'k3s-server' in group_names %}
+{% if server is undefined or server is none %}
+cluster-init: true
+{% else %}
+cluster-init: false
+{% endif %}
+https-listen-port: {{ https_port }}
+{% if flannel_backend in ['none', 'vxlan', 'ipsec', 'host-gw', 'wireguard-native']%}
+flannel-backend: {{ flannel_backend }}
+{% else %}
+flannel-backend: vxlan
+{% endif %}
+{% for val in ['scheduler', 'cloud-controller', 'kube-proxy', 'network-policy', 'helm-controller'] %}
+{% if val in disable_components %}
+disable-{{ val }}: true
+{% else %}
+disable-{{ val }}: false
+{% endif %}
+{% endfor %}
+{% if disable_addons | length is gt 0 %}
+disable:
+{% for val in disable_addons %}
+  - {{ val }}
+{% endfor %}
+{% endif %}
+{% elif 'k3s-agent' in group_names %}
+{% endif %}
+{% if server is defined and not server is none %}
+server: https://{{ server }}:{{ https_port }}
+{% endif %}
+{% if token is defined and not token is none %}
+token: {{ token }}
+{% endif %}
