@@ -1,0 +1,41 @@
+---
+# tasks file for install
+# code: language=ansible
+- name: Set k3s prerequisites
+  block:
+    - name: Install required packages
+      ansible.builtin.apt:
+        name: ['open-iscsi', 'curl', 'nfs-common', 'util-linux']
+        state: present
+      when: ansible_distribution in ['Debian', 'Ubuntu']
+
+    - name: Allow ipv4 forwarding
+      ansible.posix.sysctl:
+        name: net.ipv4.ip_forward
+        value: 1
+        state: present
+
+    - name: Allow ipv6 forwarding
+      ansible.posix.sysctl:
+        name: net.ipv6.conf.all.forwarding
+        value: 1
+        state: present
+
+    - name: Accept ipv6 router advertisment
+      ansible.posix.sysctl:
+        name: net.ipv6.conf.all.accept_ra
+        value: 2
+        state: present
+
+    - name: Load kernel module br_netfilter
+      community.general.modprobe:
+        name: br_netfilter
+        state: present
+
+- name: Install k3s binary
+  ansible.builtin.get_url:
+    url: "https://github.com/k3s-io/k3s/releases/download/{{ version }}+k3s1/k3s{{ (facter_os.architecture not in ['amd64', 'aarch64']) | ternary(facter_os.architecture, (facter_os.architecture == 'amd64') | ternary('', 'aarch64')) }}" # noqa: yaml[line-length]
+    dest: "{{ bin }}"
+    owner: root
+    group: root
+    mode: 0755
