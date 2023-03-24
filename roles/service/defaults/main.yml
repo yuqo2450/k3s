@@ -1,0 +1,3 @@
+---
+# defaults file for service
+bin: /usr/local/bin/k3s
