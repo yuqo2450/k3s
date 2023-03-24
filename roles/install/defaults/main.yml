@@ -1,0 +1,4 @@
+---
+# defaults file for install
+version: v1.25.7
+bin: /usr/local/bin/k3s
