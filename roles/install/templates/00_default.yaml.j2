@@ -1,6 +1,6 @@
 ---
 {% if 'k3s-server' in group_names %}
-{% if server is undefined or server is none %}
+{% if server == inventory_hostname %}
 cluster-init: true
 {% else %}
 cluster-init: false
@@ -26,9 +26,9 @@ disable:
 {% endif %}
 {% elif 'k3s-agent' in group_names %}
 {% endif %}
-{% if server is defined and not server is none %}
+{% if not inventory_hostname == server %}
 server: https://{{ server }}:{{ https_port }}
 {% endif %}
-{% if token is defined and not token is none %}
+{% if not inventory_hostname == server %}
 token: {{ token }}
 {% endif %}

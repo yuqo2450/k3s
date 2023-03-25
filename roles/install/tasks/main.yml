@@ -39,3 +39,86 @@
     owner: root
     group: root
     mode: 0755
+
+- name: Ensure k3s config directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  loop:
+    - /var/lib/rancher/k3s/server/manifests
+    - /var/lib/rancher/k3s/server
+    - /var/lib/rancher/k3s
+    - /var/lib/rancher
+    - /etc/rancher/k3s/config.yaml.d
+    - /etc/rancher/k3s
+    - /etc/rancher
+
+- name: Configure k3s service
+  ansible.builtin.template:
+    dest: /lib/systemd/system/k3s.service
+    src: k3s.service.j2
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Check if cluster needs to be initialized
+  ansible.builtin.stat:
+    path: /etc/rancher/k3s/k3s.yaml
+  register: cluster_init
+
+- name: Set server
+  ansible.builtin.set_fact:
+    server: "{{ inventory_hostname }}"
+  run_once: true
+
+- name: Initialize cluster on master
+  run_once: true
+  when: not cluster_init.stat.exists and inventory_hostname == server
+  block:
+    - name: Ensure init config
+      ansible.builtin.template:
+        dest: /etc/rancher/k3s/config.yaml.d/00_default.yaml
+        src: 00_default.yaml.j2
+        owner: root
+        group: root
+        mode: 0644
+
+    - name: Start k3s service on master
+      ansible.builtin.service:
+        name: k3s.service
+        state: started
+        enabled: true
+
+    - name: Ensure cluster is initialized
+      ansible.builtin.wait_for:
+        port: 6443
+        state: present
+        timeout: 300
+
+- name: Get token
+  ansible.builtin.slurp:
+    src: /var/lib/rancher/k3s/server/node-token
+  run_once: true
+  when: inventory_hostname == server
+  register: node_token
+
+- name: Set token
+  ansible.builtin.set_fact:
+    token: "{{ node_token.content | b64decode }}"
+
+- name: Configure k3s
+  ansible.builtin.template:
+    dest: /etc/rancher/k3s/config.yaml.d/00_default.yaml
+    src: 00_default.yaml.j2
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Start k3s service
+  ansible.builtin.service:
+    name: k3s.service
+    state: started
+    enabled: true
