@@ -1,7 +1,0 @@
----
-# defaults file for config
-server: null
-https_port: 6443
-flannel_backend: vxlan
-disable_components: []
-disable_addons: []
