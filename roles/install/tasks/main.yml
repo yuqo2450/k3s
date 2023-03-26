@@ -64,24 +64,29 @@
     group: root
     mode: 0644
 
-- name: Check if cluster needs to be initialized
-  ansible.builtin.stat:
-    path: /etc/rancher/k3s/k3s.yaml
-  register: cluster_init
-
-- name: Set server
+- name: Automatically determine cluster master
   ansible.builtin.set_fact:
-    server: "{{ inventory_hostname }}"
+    server: "{{ ((server is defined) and (server | length > 0)) | ternary(server, inventory_hostname) }}"
   run_once: true
+
+- name: Ensure cluster is initialized
+  ansible.builtin.wait_for:
+    host: "{{ server }}"
+    port: 6443
+    state: started
+    timeout: 5
+  ignore_errors: true
+  register: cluster_initialized
 
 - name: Initialize cluster on master
   run_once: true
-  when: not cluster_init.stat.exists and inventory_hostname == server
+  when: cluster_initialized.failed
+  delegate_to: "{{ (server in groups['k3s-server']) | ternary(server, inventory_hostname) }}"
   block:
     - name: Ensure init config
       ansible.builtin.template:
-        dest: /etc/rancher/k3s/config.yaml.d/00_default.yaml
-        src: 00_default.yaml.j2
+        dest: /etc/rancher/k3s/config.yaml.d/00_init.yaml
+        src: 00_init.yaml.j2
         owner: root
         group: root
         mode: 0644
@@ -102,7 +107,7 @@
   ansible.builtin.slurp:
     src: /var/lib/rancher/k3s/server/node-token
   run_once: true
-  when: inventory_hostname == server
+  delegate_to: "{{ (server in groups['k3s-server']) | ternary(server, inventory_hostname) }}"
   register: node_token
 
 - name: Set token
@@ -111,8 +116,8 @@
 
 - name: Configure k3s
   ansible.builtin.template:
-    dest: /etc/rancher/k3s/config.yaml.d/00_default.yaml
-    src: 00_default.yaml.j2
+    dest: /etc/rancher/k3s/config.yaml.d/01_default.yaml
+    src: 01_default.yaml.j2
     owner: root
     group: root
     mode: 0644
