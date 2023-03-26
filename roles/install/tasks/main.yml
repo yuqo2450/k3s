@@ -47,14 +47,7 @@
     owner: root
     group: root
     mode: 0755
-  loop:
-    - /var/lib/rancher/k3s/server/manifests
-    - /var/lib/rancher/k3s/server
-    - /var/lib/rancher/k3s
-    - /var/lib/rancher
-    - /etc/rancher/k3s/config.yaml.d
-    - /etc/rancher/k3s
-    - /etc/rancher
+  loop: "{{ k3s_config_dirs }}"
 
 - name: Configure k3s service
   ansible.builtin.template:
@@ -64,7 +57,7 @@
     group: root
     mode: 0644
 
-- name: Automatically determine cluster master
+- name: Determine cluster master
   ansible.builtin.set_fact:
     server: "{{ ((server is defined) and (server | length > 0)) | ternary(server, inventory_hostname) }}"
   run_once: true
@@ -85,8 +78,8 @@
   block:
     - name: Ensure init config
       ansible.builtin.template:
-        dest: /etc/rancher/k3s/config.yaml.d/00_init.yaml
-        src: 00_init.yaml.j2
+        dest: /etc/rancher/k3s/config.yaml.d/00_cluster_init.yaml
+        src: 00_cluster_init.yaml.j2
         owner: root
         group: root
         mode: 0644
@@ -96,12 +89,6 @@
         name: k3s.service
         state: started
         enabled: true
-
-    - name: Ensure cluster is initialized
-      ansible.builtin.wait_for:
-        port: 6443
-        state: present
-        timeout: 300
 
 - name: Get token
   ansible.builtin.slurp:
