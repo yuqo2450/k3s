@@ -84,11 +84,27 @@
         group: root
         mode: 0644
 
+    - name: Configure kube-vip loadbalancer
+      ansible.builtin.template:
+        dest: /var/lib/rancher/k3s/server/manifests/kvip.yaml
+        src: kvip.yml.j2
+        owner: root
+        group: root
+        mode: 0644
+      when: not server in groups['k3s-server']
+
     - name: Start k3s service on master
       ansible.builtin.service:
         name: k3s.service
         state: started
         enabled: true
+
+    - name: Ensure cluster is initialized
+      ansible.builtin.wait_for:
+        host: "{{ server }}"
+        port: 6443
+        state: started
+        timeout: 300
 
 - name: Get token
   ansible.builtin.slurp:
