@@ -20,4 +20,7 @@ disable:
   - {{ val }}
 {% endfor %}
 {% endif %}
+{% if not server in groups['k3s-server'] %}
+tls-san: {{ server }}
+{% endif %}
 {% endif %}
