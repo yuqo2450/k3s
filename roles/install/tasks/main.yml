@@ -100,7 +100,7 @@
         owner: root
         group: root
         mode: 0644
-      when: svclb_ips | length > 0
+      when: svclb_ips is defined
 
     - name: Start k3s service on master
       ansible.builtin.service:
