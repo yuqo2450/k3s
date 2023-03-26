@@ -84,14 +84,23 @@
         group: root
         mode: 0644
 
-    - name: Configure kube-vip loadbalancer
+    - name: Configure kube-vip cluster loadbalancer
       ansible.builtin.template:
-        dest: /var/lib/rancher/k3s/server/manifests/kvip.yaml
-        src: kubevip/lb.yml.j2
+        dest: /var/lib/rancher/k3s/server/manifests/lb.yaml
+        src: kubevip/lb.yaml.j2
         owner: root
         group: root
         mode: 0644
       when: not server in groups['k3s-server']
+
+    - name: Configure kube-vip service loadbalancer
+      ansible.builtin.template:
+        dest: /var/lib/rancher/k3s/server/manifests/svclb.yaml
+        src: kubevip/svclb.yaml.j2
+        owner: root
+        group: root
+        mode: 0644
+      when: svclb_ips | length > 0
 
     - name: Start k3s service on master
       ansible.builtin.service:
@@ -130,3 +139,4 @@
     name: k3s.service
     state: started
     enabled: true
+  throttle: 1

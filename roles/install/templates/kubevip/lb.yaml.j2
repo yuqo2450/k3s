@@ -38,7 +38,7 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kube-vip-ds
-    app.kubernetes.io/version: {{ kvip_version }}
+    app.kubernetes.io/version: {{ lb_version | default('latest') }}
   name: kube-vip-ds
   namespace: kube-system
 spec:
@@ -50,7 +50,7 @@ spec:
       creationTimestamp: null
       labels:
         app.kubernetes.io/name: kube-vip-ds
-        app.kubernetes.io/version: {{ kvip_version }}
+        app.kubernetes.io/version: {{ lb_version | default('latest') }}
     spec:
       affinity:
         nodeAffinity:
@@ -71,7 +71,7 @@ spec:
         - name: port
           value: "{{ https_port }}"
         - name: vip_interface
-          value: "{{ kvip_iface }}"
+          value: "{{ lb_iface }}"
         - name: vip_cidr
           value: "32"
         - name: cp_enable
@@ -92,7 +92,7 @@ spec:
           value: "1"
         - name: address
           value: "{{ server }}"
-        image: ghcr.io/kube-vip/kube-vip:{{ kvip_version }}
+        image: ghcr.io/kube-vip/kube-vip:{{ lb_version | default('latest') }}
         imagePullPolicy: Always
         name: kube-vip
         resources: {}
