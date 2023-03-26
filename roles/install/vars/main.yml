@@ -1,2 +1,10 @@
 ---
 # vars file for install
+k3s_config_dirs: 
+  - /var/lib/rancher/k3s/server/manifests
+  - /var/lib/rancher/k3s/server
+  - /var/lib/rancher/k3s
+  - /var/lib/rancher
+  - /etc/rancher/k3s/config.yaml.d
+  - /etc/rancher/k3s
+  - /etc/rancher
