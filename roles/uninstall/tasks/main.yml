@@ -1,6 +1,16 @@
 ---
 # tasks file for uninstall
 # code: language=ansible
+- name: Ensure k3s service is stopped
+  ansible.builtin.service:
+    name: k3s.service
+    state: stopped
+    enabled: false
+  register: k3s_service_present
+  failed_when:
+    - k3s_service_present.failed
+    - "'Could not find the requested service' not in k3s_service_present.msg"
+
 - name: Undo prerequisites
   block:
     - name: Allow ipv4 forwarding
@@ -26,8 +36,21 @@
         name: br_netfilter
         state: absent
 
-- name: Remove k3s binary
-  ansible.builtin.file:
-    path: "{{ bin }}"
-    state: absent
-    mode: 0755
+- name: Remove files and directories
+  block:
+    - name: Remove config dirs
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop: "{{ k3s_config_dirs }}"
+
+    - name: Remove k3s binary
+      ansible.builtin.file:
+        path: "{{ bin }}"
+        state: absent
+        mode: 0755
+
+    - name: Remove k3s service
+      ansible.builtin.file:
+        path: /usr/lib/systemd/system/k3s.service
+        state: absent
