@@ -8,3 +8,4 @@ k3s_config_dirs:
   - /etc/rancher/k3s/config.yaml.d
   - /etc/rancher/k3s
   - /etc/rancher
+controller_ips: "{{ groups[controller_group] | map('extract', hostvars) | map(attribute='ansible_host') }}"
