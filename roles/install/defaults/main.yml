@@ -1,8 +1,13 @@
 ---
 # defaults file for install
 version: v1.25.7
+controller_group: k3s-controller
+agent_group: k3s-agent
 bin: /usr/local/bin/k3s
 https_port: 6443
+# Allowed values: vxlan, host-gw, wireguard-native
 flannel_backend: vxlan
+# Allowed values: cloud-controller, helm-controller, network-policy, scheduler, kube-proxy
 disable_components: []
+# Allowed values: coredns, traefik, local-storage, metrics-server, servicelb
 disable_addons: []

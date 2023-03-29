@@ -1,5 +1,5 @@
 ---
-{% if 'k3s-server' in group_names %}
+{% if controller_group in group_names %}
 cluster-init: true
 https-listen-port: {{ https_port }}
 {% if flannel_backend in ['none', 'vxlan', 'ipsec', 'host-gw', 'wireguard-native']%}
@@ -20,7 +20,7 @@ disable:
   - {{ val }}
 {% endfor %}
 {% endif %}
-{% if not server in groups['k3s-server'] %}
+{% if not server in groups[controller_group] %}
 tls-san: {{ server }}
 {% endif %}
 {% endif %}
