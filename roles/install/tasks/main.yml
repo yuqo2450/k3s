@@ -34,7 +34,7 @@
 
 - name: Install k3s binary
   ansible.builtin.get_url:
-    url: "https://github.com/k3s-io/k3s/releases/download/{{ version }}+k3s1/k3s{{ (facter_os.architecture not in ['amd64', 'aarch64']) | ternary(facter_os.architecture, (facter_os.architecture == 'amd64') | ternary('', 'aarch64')) }}" # noqa: yaml[line-length]
+    url: "https://github.com/k3s-io/k3s/releases/download/{{ version }}+k3s1/k3s{{ (ansible_architecture not in ['x86_64', 'aarch64']) | ternary(ansible_architecture, (ansible_architecture == 'x86_64') | ternary('', 'aarch64')) }}" # noqa: yaml[line-length]
     dest: "{{ bin }}"
     owner: root
     group: root
@@ -59,7 +59,7 @@
 
 - name: Determine cluster master
   ansible.builtin.set_fact:
-    server: "{{ ((server is defined) and (server | length > 0)) | ternary(server, inventory_hostname) }}"
+    server: "{{ ((server is defined) and (server | length > 0)) | ternary(server, ansible_host) }}"
   run_once: true
 
 - name: Ensure cluster is initialized
@@ -74,7 +74,7 @@
 - name: Initialize cluster on master
   run_once: true
   when: cluster_initialized.failed
-  delegate_to: "{{ (server in groups['k3s-server']) | ternary(server, inventory_hostname) }}"
+  delegate_to: "{{ server }}"
   block:
     - name: Ensure init config
       ansible.builtin.template:
@@ -91,7 +91,7 @@
         owner: root
         group: root
         mode: 0644
-      when: not server in groups['k3s-server']
+      when: not inventory_hostname in groups[controller_group]
 
     - name: Configure kube-vip service loadbalancer
       ansible.builtin.template:
@@ -119,7 +119,7 @@
   ansible.builtin.slurp:
     src: /var/lib/rancher/k3s/server/node-token
   run_once: true
-  delegate_to: "{{ (server in groups['k3s-server']) | ternary(server, inventory_hostname) }}"
+  delegate_to: "{{ server }}"
   register: node_token
 
 - name: Set token

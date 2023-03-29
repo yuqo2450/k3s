@@ -25,10 +25,10 @@ Restart=always
 RestartSec=5s
 ExecStartPre=-/sbin/modprobe br_netfilter
 ExecStartPre=-/sbin/modprobe overlay
-{% if "k3s-server" in group_names %}
+{% if controller_group in group_names %}
 ExecStart={{ bin }} server
-{% elif "k3s-agent" in group_names %}
+{% elif agent_group in group_names %}
 ExecStart={{ bin }} agent
 {% else %}
-ExecStart=echo "Please use k3s-server and k3s-agent as inventory group names!"
+ExecStart=echo "Host not in {{ controller_group }} or {{ agent_group }}"
 {% endif %}
