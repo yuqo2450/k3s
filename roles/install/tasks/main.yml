@@ -38,7 +38,7 @@
     dest: "{{ bin }}"
     owner: root
     group: root
-    mode: 0755
+    mode: '0755'
 
 - name: Ensure k3s config directories
   ansible.builtin.file:
@@ -46,7 +46,7 @@
     state: directory
     owner: root
     group: root
-    mode: 0755
+    mode: '0755'
   loop: "{{ k3s_config_dirs }}"
 
 - name: Configure k3s service
@@ -55,11 +55,11 @@
     src: k3s.service.j2
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
 
 - name: Determine cluster master
   ansible.builtin.set_fact:
-    server: "{{ ((server is defined) and (server | length > 0)) | ternary(server, ansible_host) }}"
+    server: "{{ ((server is defined) and (server | ansible.utils.ipaddr)) | ternary(server, ansible_host) }}"
   run_once: true
 
 - name: Ensure cluster is initialized
@@ -68,13 +68,18 @@
     port: 6443
     state: started
     timeout: 5
-  ignore_errors: true
   register: cluster_initialized
+  failed_when:
+    - cluster_initialized.failed
+    - "'Timeout when waiting' not in cluster_initialized.msg"
+  changed_when:
+    - cluster_initialized.failed
+    - "'Timeout when waiting' in cluster_initialized.msg"
 
 - name: Initialize cluster on master
   run_once: true
-  when: cluster_initialized.failed
-  delegate_to: "{{ server }}"
+  when: cluster_initialized.changed # noqa: no-handler
+  delegate_to: "{{ (server in controller_ips) | ternary(server, ansible_host) }}"
   block:
     - name: Ensure init config
       ansible.builtin.template:
@@ -82,7 +87,7 @@
         src: config/00_cluster_init.yaml.j2
         owner: root
         group: root
-        mode: 0644
+        mode: '0644'
 
     - name: Configure kube-vip cluster loadbalancer
       ansible.builtin.template:
@@ -90,8 +95,8 @@
         src: kubevip/lb.yaml.j2
         owner: root
         group: root
-        mode: 0644
-      when: not inventory_hostname in groups[controller_group]
+        mode: '0644'
+      when: lb_iface is defined
 
     - name: Configure kube-vip service loadbalancer
       ansible.builtin.template:
@@ -99,7 +104,7 @@
         src: kubevip/svclb.yaml.j2
         owner: root
         group: root
-        mode: 0644
+        mode: '0644'
       when: svclb_ips is defined
 
     - name: Start k3s service on master
@@ -119,7 +124,7 @@
   ansible.builtin.slurp:
     src: /var/lib/rancher/k3s/server/node-token
   run_once: true
-  delegate_to: "{{ server }}"
+  delegate_to: "{{ (server in controller_ips) | ternary(server, ansible_host) }}"
   register: node_token
 
 - name: Set token
@@ -132,7 +137,7 @@
     src: config/01_default.yaml.j2
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
 
 - name: Start k3s service
   ansible.builtin.service:
