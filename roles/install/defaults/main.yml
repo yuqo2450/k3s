@@ -1,6 +1,6 @@
 ---
 # defaults file for install
-version: v1.25.7
+version: v1.26.3
 controller_group: k3s-controller
 agent_group: k3s-agent
 bin: /usr/local/bin/k3s
