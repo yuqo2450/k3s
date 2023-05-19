@@ -26,6 +26,7 @@ kube-controller-manager-arg: pod-eviction-timeout=20s
 kube-apiserver-arg: default-not-ready-toleration-seconds=20
 kube-apiserver-arg: default-unreachable-toleration-seconds=20
 node-label: node.kubernetes.io/role=controller
+etcd-expose-metrics: true
 {% endif %}
 {% elif agent_group in group_names %}
 node-label: node.kubernetes.io/role=agent
