@@ -1,9 +1,10 @@
 ---
 # defaults file for install
-version: v1.26.3
-controller_group: k3s-controller
-agent_group: k3s-agent
-bin: /usr/local/bin/k3s
+version: v1.26.5
+nfs_share: ''
+controller_group: kube-controller
+agent_group: kube-agent
+bin_path: /usr/local/bin
 https_port: 6443
 # Allowed values: vxlan, host-gw, wireguard-native
 flannel_backend: vxlan

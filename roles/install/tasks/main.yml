@@ -33,12 +33,22 @@
         state: present
 
 - name: Install k3s binary
-  ansible.builtin.get_url:
-    url: "https://github.com/k3s-io/k3s/releases/download/{{ version }}+k3s1/k3s{{ (ansible_architecture not in ['x86_64', 'aarch64']) | ternary(ansible_architecture, (ansible_architecture == 'x86_64') | ternary('', 'aarch64')) }}" # noqa: yaml[line-length]
-    dest: "{{ bin }}"
-    owner: root
-    group: root
-    mode: '0755'
+  block:
+    - name: Download binary
+      ansible.builtin.get_url:
+        url: "https://github.com/k3s-io/k3s/releases/download/{{ version }}+k3s1/k3s{{ (ansible_architecture not in ['x86_64', 'aarch64']) | ternary(ansible_architecture, (ansible_architecture == 'x86_64') | ternary('', 'aarch64')) }}" # noqa: yaml[line-length]
+        dest: "{{ bin_path }}/k3s-{{ version }}"
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Set link to k3s
+      ansible.builtin.file:
+        state: link
+        src: "{{ bin_path }}/k3s-{{ version }}"
+        dest: "{{ bin_path }}/k3s"
+        owner: root
+        group: root
 
 - name: Ensure k3s config directories
   ansible.builtin.file:
@@ -48,6 +58,24 @@
     group: root
     mode: '0755'
   loop: "{{ k3s_config_dirs }}"
+
+- name: Mount etcd nfs share
+  when: (controller_group in group_names) and (nfs_share | length > 0)
+  block:
+    - name: Ensure etcd directory
+      ansible.builtin.file:
+        path: "{{ k3s_etcd_dir }}"
+        state: directory
+        owner: root
+        group: root
+        mode: '0700'
+
+    - name: Mount nfs share
+      ansible.posix.mount:
+        path: "{{ k3s_etcd_dir }}"
+        src: "{{ nfs_share }}"
+        state: mounted
+        fstype: nfs
 
 - name: Configure k3s service
   ansible.builtin.template:
