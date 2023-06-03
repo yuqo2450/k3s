@@ -2,7 +2,7 @@
 Description=Lightweight Kubernetes
 Documentation=https://k3s.io
 Wants=network-online.target
-After=network-online.target
+After=network-online.target remote-fs.target
 
 [Install]
 WantedBy=multi-user.target
@@ -26,9 +26,9 @@ RestartSec=5s
 ExecStartPre=-/sbin/modprobe br_netfilter
 ExecStartPre=-/sbin/modprobe overlay
 {% if controller_group in group_names %}
-ExecStart={{ bin }} server
+ExecStart={{ bin_path }}/k3s server
 {% elif agent_group in group_names %}
-ExecStart={{ bin }} agent
+ExecStart={{ bin_path }}/k3s agent
 {% else %}
 ExecStart=echo "Host not in {{ controller_group }} or {{ agent_group }}"
 {% endif %}
