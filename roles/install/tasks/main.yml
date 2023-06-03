@@ -59,24 +59,6 @@
     mode: '0755'
   loop: "{{ k3s_config_dirs }}"
 
-- name: Mount etcd nfs share
-  when: (controller_group in group_names) and (nfs_share | length > 0)
-  block:
-    - name: Ensure etcd directory
-      ansible.builtin.file:
-        path: "{{ k3s_etcd_dir }}"
-        state: directory
-        owner: root
-        group: root
-        mode: '0700'
-
-    - name: Mount nfs share
-      ansible.posix.mount:
-        path: "{{ k3s_etcd_dir }}"
-        src: "{{ nfs_share }}"
-        state: mounted
-        fstype: nfs
-
 - name: Configure k3s service
   ansible.builtin.template:
     dest: /lib/systemd/system/k3s.service
