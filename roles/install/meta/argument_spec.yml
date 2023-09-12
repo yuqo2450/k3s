@@ -1,0 +1,48 @@
+---
+# code: language=ansible
+argument_spec:
+  main:
+  options:
+    version:
+      description: kubernetes version to be installed
+      type: str
+      required: false
+      default: v1.28.1
+    controller_group:
+      description: Name of the inventory group used for controll nodes
+      type: str
+      required: false
+      default: kube-controller
+    argent_group:
+      description: Name of the inventory group used for agent nodes
+      type: str
+      required: false
+      default: kube-agent
+    bin_path:
+      description: Local path where k3s binary will be installed to.
+      type: str
+      required: false
+      default: /usr/local/bin
+    https_port:
+      description: Port used on the nodes for api connection
+      type: int
+      required: false
+      default: 6443
+    flannel_backend:
+      description: Backend used for flannel
+      type: str
+      choices: [vxlan, host-gw, wireguard-native]
+      required: false
+      default: vxlan
+    disable_components:
+      description: Kubernetes componentes to be disabled on the node
+      type: str
+      choices: [cloud-controller, helm-controller, network-policy, scheduler, kube-proxy]
+      required: false
+      default: []
+    disable_addons:
+      description: Additional workloads to be deployed on install
+      type: str
+      choices: [coredns, traefik, local-storage, metrics-server, servicelb]
+      required: false
+      default: []
