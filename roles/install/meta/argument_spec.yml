@@ -30,19 +30,22 @@ argument_spec:
       default: 6443
     flannel_backend:
       description: Backend used for flannel
-      type: str
+      type: list
+      elements: str
       choices: [vxlan, host-gw, wireguard-native]
       required: false
       default: vxlan
     disable_components:
       description: Kubernetes componentes to be disabled on the node
-      type: str
+      type: list
+      elements: str
       choices: [cloud-controller, helm-controller, network-policy, scheduler, kube-proxy]
       required: false
       default: []
     disable_addons:
       description: Additional workloads to be deployed on install
-      type: str
+      type: list
+      elements: str
       choices: [coredns, traefik, local-storage, metrics-server, servicelb]
       required: false
       default: []
