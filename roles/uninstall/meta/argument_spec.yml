@@ -1,0 +1,10 @@
+---
+# code: language=ansible
+argument_spec:
+  main:
+  options:
+    bin:
+      desciption: Path to the k3s binary
+      type: str
+      required: false
+      default: /usr/local/bin/k3s
