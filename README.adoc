@@ -1,3 +1,8 @@
-# Ansible Collection - homelab.k3s
+= Ansible Collection - homelab.k3s
+:hardbreaks-option:
 
-Documentation for the collection.
+An ansible collection to install and uninstall k3s. This can be done by installing a single node cluster or a cluster containing _x_ controllers and _x_ agents.
+
+== Installation
+
+
