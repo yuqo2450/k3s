@@ -3,6 +3,61 @@
 
 An ansible collection to install and uninstall k3s. This can be done by installing a single node cluster or a cluster containing _x_ controllers and _x_ agents.
 
+Roles included in this collection:
+
+- yuqo2450.k3s.install
+- yuqo2450.k3s.uninstall
+
 == Installation
 
+Download directly from github:
+----
+# Change to your users ansible collection directory
+cd ~/.ansible/collections/ansible_collections/
 
+# Create director for collection owner and change to new directory
+mkdir yuqo2450
+cd yuqo2450/
+
+# Clone git repository
+git clone https://github.com/yuqo2450/ans-k3s.git
+----
+
+Include in your playbook's directory `requriements.yml` file:
+----
+---
+collections:
+  - name: yuqo2450.k3s
+    type: git
+    source: https://github.com/yuqo2450/ans-k3s.git
+    version: <specify ref>
+----
+
+== Usage
+
+Example playbook to install a k3s cluster while setting a loadbalancer ip for the cluster, with kube-controller and kube-agent defined in inventory:
+----
+---
+- name: Install k3s cluster
+  hosts: [kube-controller, kube-agent]
+  gather_facts: true
+
+  tasks:
+    - name: Install k3s cluster
+      ansible.builtin.include_role:
+        name: yuqo2450.k3s.install
+      vars:
+        server: 192.168.1.100
+        svclb_ips:
+          global: 192.168.1.101-192.168.1.150
+----
+
+Further documentation for each role can be found in the specific role documentation.
+
+== License
+
+GPL-3.0-only
+
+== Author
+
+This collection was created by Daniel Rossa.
