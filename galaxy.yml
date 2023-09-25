@@ -42,6 +42,7 @@ tags: [linux, infrastructure]
 # range specifiers can be set and are separated by ','
 dependencies:
   ansible.posix: 1.5.4
+  community.general: 7.4.0
 
 # The URL of the originating SCM repository
 repository: https://github.com/yuqo2450/ans-k3s
