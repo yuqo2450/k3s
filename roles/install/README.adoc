@@ -1,10 +1,41 @@
 = yuqo2450.k3s.install
+:hardbreaks-option:
 
 This role is meant to install a k3s cluster on any number of nodes consisting of both controllers and agents. Despite it can be used to install a single node k3s cluster.
 
 == Requirements
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+This role requires your inventory to be setup correctly. This is required because it will install both kubernetes controllers and agents.
+To distinguish, it is required to add a `kubec-controller` and `kubec-agent` group in your inventory:
+----
+---
+all:
+  hosts:
+    kube-ctrl01:
+      ansible-host: 192.168.1.11
+    kube-ctrl02:
+      ansible-host: 192.168.1.12
+    kube-ctrl03:
+      ansible-host: 192.168.1.13
+    kube-agent01:
+      ansible_host: 192.168.1.21
+    kube-agent02:
+      ansible_host: 192.168.1.22
+    kube-agent03:
+      ansible_host: 192.168.1.23
+  children:
+    kube-controller:
+      hosts:
+        kube-ctrl01
+        kube-ctrl02
+        kube-ctrl03
+    kube-agent:
+      hosts:
+        kube-agent01
+        kube-agent02
+        kube-agent03
+
+----
 
 == Role Variables
 
