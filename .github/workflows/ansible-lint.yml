@@ -1,7 +1,10 @@
 ---
 name: Lint ansible collection and roles
 run-name: ansible-lint
-on: push
+on:
+  push:
+  pull_request:
+    branches: [main]
 
 jobs:
   AnsibleLint:
