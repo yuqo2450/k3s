@@ -1,0 +1,14 @@
+---
+name: Lint ansible collection and roles
+run-name: ansible-lint
+on: push
+
+jobs:
+  AnsibleLint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Lint ansible code
+        uses: ansible/ansible-lint@main
