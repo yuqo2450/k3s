@@ -1,2 +1,2 @@
-[k3s-server]
+[kube-controller]
 k3s.exampel.com
