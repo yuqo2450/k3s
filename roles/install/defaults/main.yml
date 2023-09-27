@@ -1,6 +1,6 @@
 ---
 # defaults file for install
-install_version: v1.28.1
+install_version: v1.28.2
 install_controller_group: kube-controller
 install_agent_group: kube-agent
 install_bin_path: /usr/local/bin
