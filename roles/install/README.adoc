@@ -1,0 +1,103 @@
+= yuqo2450.k3s.install
+:hardbreaks-option:
+
+This role is meant to install a k3s cluster on any number of nodes consisting of both controllers and agents. Despite it can be used to install a single node k3s cluster.
+
+== Requirements
+
+Because this role can install multi node cluster, it is necessary to set up your inventory to divide between controllers and agents.
+To distinguish those, it is required to add a `kubec-controller` and `kubec-agent` group in your inventory:
+----
+---
+all:
+  hosts:
+    kube-ctrl01:
+      ansible-host: 192.168.1.11
+    kube-ctrl02:
+      ansible-host: 192.168.1.12
+    kube-ctrl03:
+      ansible-host: 192.168.1.13
+    kube-agent01:
+      ansible_host: 192.168.1.21
+    kube-agent02:
+      ansible_host: 192.168.1.22
+    kube-agent03:
+      ansible_host: 192.168.1.23
+  children:
+    kube-controller:
+      hosts:
+        kube-ctrl01
+        kube-ctrl02
+        kube-ctrl03
+    kube-agent:
+      hosts:
+        kube-agent01
+        kube-agent02
+        kube-agent03
+----
+
+== Role Variables
+
+This is an overview of all variables, that can be set using this role:
+
+.Variables that should be adjusted by the user
+[frame=none,cols="1,1,3"]
+|===
+| Variable | Default | Description
+
+| version | v1.28.2 | k3s and kubernetes version.
+| controller_group | kube-controller | Inventory group to use as controller nodes.
+| agent_group | kube-agent | Inventory group to use as agent nodes.
+| bin_path | /usr/local/bin | Path where k3s binary should be installed to.
+| https_port | 6443 | Port where kubernetes API can be accessed.
+| flannel_backend | vxlan | Backend for flannel network controller. Can only be one of [vxlan, host-gw, wireguard-native].
+| disable_components | [] | Kubernetes control plane components to disable. Available options are [cloud-controller, helm-controller, network-policy, scheduler, kube-proxy].
+| disable_addons | [] | Disable additional software that will be installed to the cluster. Available options are [coredns, traefik, local-storage, metrics-server, servicelb].
+|===
+
+.Variables that are adjusted by the developer
+[frame=none,cols="1,1,3"]
+|===
+| Variable | Default | Description
+
+| k3s_config_dirs | [/var/lib/rancher/k3s/server/manifests, /etc/rancher/k3s/config.yaml.d] | Paths where ranchers k3s configuration can be found.
+| controller_ips | automated list of ips of the controller group | Kubernetes controller ips.
+| lb_version | v0.6.2 | Version of kube-vip to be used for cluster load balancer.
+| svclb_version | v0.0.7 | Version of kube-vip to be used for service load balancer.
+|===
+
+== Dependencies
+
+Existing dependencies are:
+
+- ansible.posix
+- community.general
+
+These should be automatically installed with the ansible package.
+
+
+== Example Playbook
+
+----
+---
+- name: Install k3s cluster
+  hosts: [kube-controller, kube-agent]
+  gather_facts: true
+
+  tasks:
+    - name: Install k3s cluster
+      ansible.builtin.include_role:
+        name: yuqo2450.k3s.install
+      vars:
+        server: 192.168.1.100
+        svclb_ips:
+          global: 192.168.1.101-192.168.1.150
+----
+
+== License
+
+MIT
+
+== Author Information
+
+This role was created by Daniel Rossa.
