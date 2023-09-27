@@ -1,26 +1,45 @@
 = Role Name
+:hardbreaks-option:
 
-A brief description of the role goes here.
+This role uninstalles k3s from the system. This includes removing the k3s binary, all configuration directories and resetting sysctls and modprobe.
 
 == Requirements
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+There are no requirements for this role except it is only usefull when k3s was installed before.
 
 == Role Variables
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+This is an overview of all variables, that can be set using this role:
+
+.Variables that should be adjusted by the user
+[frame=none,cols="1,1,3"]
+|===
+| Variable | Default | Description
+
+| bin | /usr/local/bin/k3s | Path to k3s binary.
+| k3s_config_dirs | [/var/lib/rancher, /etc/rancher, /run/k3s] | Directories where configration for k3s or generated data can be found.
+|===
 
 == Dependencies
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+Existing dependencies are:
+
+- ansible.posix
+- community.general
+
+These should be automatically installed with the ansible package.
 
 == Example Playbook
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+---
+- name: Uninstall k3s cluster
+  hosts: all
+  gather_facts: true
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+  tasks:
+    - name: Uninstall k3s cluster
+      ansible.builtin.include_role:
+        name: yuqo2450.k3s.uninstall
 
 == License
 
