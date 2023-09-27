@@ -5,8 +5,8 @@ An ansible collection to install and uninstall k3s. This can be done by installi
 
 Roles included in this collection:
 
-- yuqo2450.k3s.install
-- yuqo2450.k3s.uninstall
+- https://github.com/yuqo2450/ans-k3s/tree/main/roles/install[yuqo2450.k3s.install]
+- https://github.com/yuqo2450/ans-k3s/tree/main/roles/uninstall[yuqo2450.k3s.uninstall]
 
 == Installation
 
