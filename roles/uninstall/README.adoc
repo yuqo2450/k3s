@@ -1,0 +1,50 @@
+= Role Name
+:hardbreaks-option:
+
+This role uninstalles k3s from the system. This includes removing the k3s binary, all configuration directories and resetting sysctls and modprobe.
+
+== Requirements
+
+There are no requirements for this role except it is only usefull when k3s was installed before.
+
+== Role Variables
+
+This is an overview of all variables, that can be set using this role:
+
+.Variables that should be adjusted by the user
+[frame=none,cols="1,1,3"]
+|===
+| Variable | Default | Description
+
+| bin | /usr/local/bin/k3s | Path to k3s binary.
+| k3s_config_dirs | [/var/lib/rancher, /etc/rancher, /run/k3s] | Directories where configration for k3s or generated data can be found.
+|===
+
+== Dependencies
+
+Existing dependencies are:
+
+- ansible.posix
+- community.general
+
+These should be automatically installed with the ansible package.
+
+== Example Playbook
+
+---
+- name: Uninstall k3s cluster
+  hosts: all
+  gather_facts: true
+
+  tasks:
+    - name: Uninstall k3s cluster
+      ansible.builtin.include_role:
+        name: yuqo2450.k3s.uninstall
+
+== License
+
+MIT
+
+== Author Information
+
+An optional section for the role authors to include contact information, or a website (HTML is not allowed).

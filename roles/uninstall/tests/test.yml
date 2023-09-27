@@ -1,5 +1,6 @@
 ---
-- hosts: all
+- name: Test yuqo2450.k3s.uninstall
+  hosts: all
   remote_user: root
   roles:
-    - homelab.k3s.uninstall
+    - yuqo2450.k3s.uninstall

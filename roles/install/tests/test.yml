@@ -1,5 +1,6 @@
 ---
-- hosts: all
+- name: Test yuqo2450.k3s.install
+  hosts: all
   remote_user: root
   roles:
-    - homelab.k3s.install
+    - yuqo2450.k3s.install
