@@ -56,7 +56,7 @@ Further documentation for each role can be found in the specific role documentat
 
 == License
 
-GPL-3.0-only
+MIT
 
 == Author
 

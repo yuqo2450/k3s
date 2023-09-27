@@ -96,7 +96,7 @@ These should be automatically installed with the ansible package.
 
 == License
 
-GPL-3.0-only
+MIT
 
 == Author Information
 
