@@ -28,13 +28,13 @@ kube-apiserver-arg: default-not-ready-toleration-seconds=20
 kube-apiserver-arg: default-unreachable-toleration-seconds=20
 node-label: node.kubernetes.io/role=controller
 etcd-expose-metrics: true
-{% if not k3s_install_api_ip in groups[install_controller_group] %}
-tls-san: {{ k3s_install_api_ip }}
+{% if install_lb_ip %}
+tls-san: {{ install_lb_ip }}
 {% endif %}
 {% elif install_agent_group in group_names %}
 node-label: node.kubernetes.io/role=agent
 {% endif %}
-server: https://{{ k3s_install_api_ip }}:{{ install_https_port }}
+server: https://{{ k3s_install_init_server }}:{{ install_https_port }}
 {% if k3s_install_token is defined %}
 token: {{ k3s_install_token }}
 {% endif %}

@@ -71,6 +71,7 @@
   ansible.builtin.set_fact:
     k3s_install_init_server: "{{ ansible_host }}"
   run_once: true
+  when: ansible_host in groups[install_controller_group]
 
 - name: Ensure cluster is initialized
   ansible.builtin.wait_for:
@@ -89,33 +90,35 @@
 - name: Initialize cluster on k3s init server
   run_once: true
   when: cluster_initialized.changed # noqa: no-handler
-  delegate_to: "{{ (k3s_install_init_server in install_controller_ips) | ternary(k3s_install_init_server, ansible_host) }}"
+  delegate_to: "{{ k3s_install_init_server }}"
   block:
     - name: Ensure init config
       ansible.builtin.template:
-        dest: /etc/rancher/k3s/config.yaml.d/00_cluster_init.yaml
+        dest: /etc/rancher/k3s/config.yaml.d/default.yaml
         src: config/00_cluster_init.yaml.j2
         owner: root
         group: root
         mode: '0644'
 
-    - name: Configure kube-vip cluster loadbalancer
-      ansible.builtin.template:
-        dest: /var/lib/rancher/k3s/server/manifests/lb.yaml
-        src: kubevip/lb.yaml.j2
-        owner: root
-        group: root
-        mode: '0644'
-      when: install_lb_iface is defined
+    - name: Configure kube-vip
+      block:
+        - name: Configure cluster loadbalancer
+          ansible.builtin.template:
+            dest: /var/lib/rancher/k3s/server/manifests/lb.yaml
+            src: kubevip/lb.yaml.j2
+            owner: root
+            group: root
+            mode: '0644'
+          when: install_lb_ip is defined
 
-    - name: Configure kube-vip service loadbalancer
-      ansible.builtin.template:
-        dest: /var/lib/rancher/k3s/server/manifests/svclb.yaml
-        src: kubevip/svclb.yaml.j2
-        owner: root
-        group: root
-        mode: '0644'
-      when: install_svclb_ips is defined
+        - name: Configure service loadbalancer
+          ansible.builtin.template:
+            dest: /var/lib/rancher/k3s/server/manifests/svclb.yaml
+            src: kubevip/svclb.yaml.j2
+            owner: root
+            group: root
+            mode: '0644'
+          when: install_svclb_ips is defined
 
     - name: Start k3s service on k3s init server
       ansible.builtin.service:
@@ -134,7 +137,7 @@
   ansible.builtin.slurp:
     src: /var/lib/rancher/k3s/server/node-token
   run_once: true
-  delegate_to: "{{ (k3s_install_init_server in install_controller_ips) | ternary(k3s_install_init_server, ansible_host) }}"
+  delegate_to: "{{ k3s_install_init_server }}"
   register: node_token
 
 - name: Set token
@@ -143,11 +146,12 @@
 
 - name: Configure k3s
   ansible.builtin.template:
-    dest: /etc/rancher/k3s/config.yaml.d/01_default.yaml
+    dest: /etc/rancher/k3s/config.yaml.d/default.yaml
     src: config/01_default.yaml.j2
     owner: root
     group: root
     mode: '0644'
+  notify: restart_k3s
 
 - name: Start k3s service
   ansible.builtin.service:
