@@ -35,6 +35,6 @@ node-taint: {{ taint }}
 node-label: node.kubernetes.io/role=agent
 {% endif %}
 server: https://{{ k3s_install_api_ip }}:{{ install_https_port }}
-{% if install_token is defined %}
-token: {{ install_token }}
+{% if k3s_install_token is defined %}
+token: {{ k3s_install_token }}
 {% endif %}
