@@ -95,7 +95,7 @@
     - name: Ensure init config
       ansible.builtin.template:
         dest: /etc/rancher/k3s/config.yaml.d/default.yaml
-        src: config/00_cluster_init.yaml.j2
+        src: config/init.yaml.j2
         owner: root
         group: root
         mode: '0644'
@@ -147,7 +147,7 @@
 - name: Configure k3s
   ansible.builtin.template:
     dest: /etc/rancher/k3s/config.yaml.d/default.yaml
-    src: config/01_default.yaml.j2
+    src: config/default.yaml.j2
     owner: root
     group: root
     mode: '0644'
