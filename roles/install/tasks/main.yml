@@ -139,7 +139,7 @@
 
 - name: Set token
   ansible.builtin.set_fact:
-    token: "{{ node_token.content | b64decode }}"
+    install_token: "{{ node_token.content | b64decode }}"
 
 - name: Configure k3s
   ansible.builtin.template:
