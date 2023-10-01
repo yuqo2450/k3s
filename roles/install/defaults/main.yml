@@ -1,13 +1,13 @@
 ---
 # defaults file for install
-k3s_version: v1.28.2
-k3s_controller_group: kube-controller
-k3s_agent_group: kube-agent
-k3s_bin_path: /usr/local/bin
-k3s_https_port: 6443
+install_version: v1.28.2
+install_controller_group: kube-controller
+install_agent_group: kube-agent
+install_bin_path: /usr/local/bin
+install_https_port: 6443
 # Allowed values: vxlan, host-gw, wireguard-native
-k3s_flannel_backend: vxlan
+install_flannel_backend: vxlan
 # Allowed values: cloud-controller, helm-controller, network-policy, scheduler, kube-proxy
-k3s_disable_components: []
+install_disable_components: []
 # Allowed values: coredns, traefik, local-storage, metrics-server, servicelb
-k3s_disable_addons: []
+install_disable_addons: []

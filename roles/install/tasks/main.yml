@@ -36,8 +36,8 @@
   block:
     - name: Download binary
       ansible.builtin.get_url:
-        url: "https://github.com/k3s-io/k3s/releases/download/{{ k3s_version }}+k3s1/k3s{{ (ansible_architecture not in ['x86_64', 'aarch64']) | ternary(ansible_architecture, (ansible_architecture == 'x86_64') | ternary('', 'aarch64')) }}" # noqa: yaml[line-length]
-        dest: "{{ k3s_bin_path }}/k3s-{{ k3s_version }}"
+        url: "https://github.com/k3s-io/k3s/releases/download/{{ install_version }}+k3s1/k3s{{ (ansible_architecture not in ['x86_64', 'aarch64']) | ternary(ansible_architecture, (ansible_architecture == 'x86_64') | ternary('', 'aarch64')) }}" # noqa: yaml[line-length]
+        dest: "{{ install_bin_path }}/k3s-{{ install_version }}"
         owner: root
         group: root
         mode: '0755'
@@ -45,8 +45,8 @@
     - name: Set link to k3s
       ansible.builtin.file:
         state: link
-        src: "{{ k3s_bin_path }}/k3s-{{ k3s_version }}"
-        dest: "{{ k3s_bin_path }}/k3s"
+        src: "{{ install_bin_path }}/k3s-{{ install_version }}"
+        dest: "{{ install_bin_path }}/k3s"
         owner: root
         group: root
 
@@ -57,7 +57,7 @@
     owner: root
     group: root
     mode: '0755'
-  loop: "{{ k3s_config_dirs }}"
+  loop: "{{ install_config_dirs }}"
 
 - name: Configure k3s service
   ansible.builtin.template:
@@ -69,12 +69,12 @@
 
 - name: Determine cluster master
   ansible.builtin.set_fact:
-    k3s_server: "{{ ((k3s_server is defined) and (k3s_server | ansible.utils.ipaddr)) | ternary(k3s_server, ansible_host) }}"
+    install_api_ip: "{{ ((install_api_ip is defined) and (install_api_ip | ansible.utils.ipaddr)) | ternary(install_api_ip, ansible_host) }}"
   run_once: true
 
 - name: Ensure cluster is initialized
   ansible.builtin.wait_for:
-    host: "{{ k3s_server }}"
+    host: "{{ install_api_ip }}"
     port: 6443
     state: started
     timeout: 5
@@ -89,7 +89,7 @@
 - name: Initialize cluster on master
   run_once: true
   when: cluster_initialized.changed # noqa: no-handler
-  delegate_to: "{{ (k3s_server in k3s_controller_ips) | ternary(k3s_server, ansible_host) }}"
+  delegate_to: "{{ (install_api_ip in install_controller_ips) | ternary(install_api_ip, ansible_host) }}"
   block:
     - name: Ensure init config
       ansible.builtin.template:
@@ -106,7 +106,7 @@
         owner: root
         group: root
         mode: '0644'
-      when: k3s_lb_iface is defined
+      when: install_lb_iface is defined
 
     - name: Configure kube-vip service loadbalancer
       ansible.builtin.template:
@@ -115,7 +115,7 @@
         owner: root
         group: root
         mode: '0644'
-      when: k3s_svclb_ips is defined
+      when: install_svclb_ips is defined
 
     - name: Start k3s service on master
       ansible.builtin.service:
@@ -125,7 +125,7 @@
 
     - name: Ensure cluster is initialized
       ansible.builtin.wait_for:
-        host: "{{ k3s_server }}"
+        host: "{{ install_api_ip }}"
         port: 6443
         state: started
         timeout: 300
@@ -134,7 +134,7 @@
   ansible.builtin.slurp:
     src: /var/lib/rancher/k3s/server/node-token
   run_once: true
-  delegate_to: "{{ (k3s_server in k3s_controller_ips) | ternary(k3s_server, ansible_host) }}"
+  delegate_to: "{{ (install_api_ip in install_controller_ips) | ternary(install_api_ip, ansible_host) }}"
   register: node_token
 
 - name: Set token

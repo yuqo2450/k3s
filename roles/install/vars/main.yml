@@ -1,8 +1,8 @@
 ---
 # vars file for install
-k3s_config_dirs:
+install_config_dirs:
   - /var/lib/rancher/k3s/server/manifests
   - /etc/rancher/k3s/config.yaml.d
-k3s_controller_ips: "{{ groups[controller_group] | map('extract', hostvars) | map(attribute='ansible_host') }}"
-k3s_lb_version: v0.6.2
-k3s_svclb_version: v0.0.7
+install_controller_ips: "{{ groups[controller_group] | map('extract', hostvars) | map(attribute='ansible_host') }}"
+install_lb_version: v0.6.2
+install_svclb_version: v0.0.7
