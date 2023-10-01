@@ -3,46 +3,46 @@
 argument_spec:
   main:
   options:
-    version:
+    k3s_version:
       description: kubernetes version to be installed
       type: str
       required: false
       default: v1.28.1
-    controller_group:
+    k3s_controller_group:
       description: Name of the inventory group used for controll nodes
       type: str
       required: false
       default: kube-controller
-    argent_group:
+    k3s_argent_group:
       description: Name of the inventory group used for agent nodes
       type: str
       required: false
       default: kube-agent
-    bin_path:
+    k3s_bin_path:
       description: Local path where k3s binary will be installed to.
       type: str
       required: false
       default: /usr/local/bin
-    https_port:
+    k3s_https_port:
       description: Port used on the nodes for api connection
       type: int
       required: false
       default: 6443
-    flannel_backend:
+    k3s_flannel_backend:
       description: Backend used for flannel
       type: list
       elements: str
       choices: [vxlan, host-gw, wireguard-native]
       required: false
       default: vxlan
-    disable_components:
+    k3s_disable_components:
       description: Kubernetes componentes to be disabled on the node
       type: list
       elements: str
       choices: [cloud-controller, helm-controller, network-policy, scheduler, kube-proxy]
       required: false
       default: []
-    disable_addons:
+    k3s_disable_addons:
       description: Additional workloads to be deployed on install
       type: list
       elements: str
