@@ -61,3 +61,8 @@ argument_spec:
       description: IP ranges to be used for kubernetes LoadBalancer services
       type: dict
       required: false
+    install_taints:
+      description: Taints to be applied to kubernetes nodes
+      type: list
+      elements: str
+      default: []
