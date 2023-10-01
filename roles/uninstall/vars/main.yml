@@ -1,6 +1,6 @@
 ---
 # vars file for uninstall
-uninstall_k3s_config_dirs:
+uninstall_config_dirs:
   - /var/lib/rancher
   - /etc/rancher
   - /run/k3s

@@ -42,11 +42,11 @@
       ansible.builtin.file:
         path: "{{ item }}"
         state: absent
-      loop: "{{ k3s_config_dirs }}"
+      loop: "{{ uninstall_config_dirs }}"
 
     - name: Remove k3s binary
       ansible.builtin.file:
-        path: "{{ bin }}"
+        path: "{{ uninstall_bin }}"
         state: absent
         mode: '0755'
 
