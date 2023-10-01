@@ -33,7 +33,6 @@ tls-san: {{ install_lb_ip }}
 {% endif %}
 {% elif install_agent_group in group_names %}
 node-label: node.kubernetes.io/role=agent
-node-label: kubernetes.io/role=agent
 {% endif %}
 server: https://{{ k3s_install_init_server }}:{{ install_https_port }}
 {% if k3s_install_token is defined %}
