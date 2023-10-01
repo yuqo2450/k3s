@@ -38,7 +38,7 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kube-vip-ds
-    app.kubernetes.io/version: {{ lb_version | default('latest') }}
+    app.kubernetes.io/version: {{ k3s_lb_version | default('latest') }}
   name: kube-vip-ds
   namespace: kube-system
 spec:
@@ -50,7 +50,7 @@ spec:
       creationTimestamp: null
       labels:
         app.kubernetes.io/name: kube-vip-ds
-        app.kubernetes.io/version: {{ lb_version | default('latest') }}
+        app.kubernetes.io/version: {{ k3s_lb_version | default('latest') }}
     spec:
       affinity:
         nodeAffinity:
@@ -69,9 +69,9 @@ spec:
         - name: vip_arp
           value: "true"
         - name: port
-          value: "{{ https_port }}"
+          value: "{{ k3s_https_port }}"
         - name: vip_interface
-          value: "{{ lb_iface }}"
+          value: "{{ k3s_lb_iface }}"
         - name: cp_enable
           value: "true"
         - name: cp_namespace
@@ -89,8 +89,8 @@ spec:
         - name: vip_retryperiod
           value: "1"
         - name: address
-          value: "{{ server }}"
-        image: ghcr.io/kube-vip/kube-vip:{{ lb_version | default('latest') }}
+          value: "{{ k3s_server }}"
+        image: ghcr.io/kube-vip/kube-vip:{{ k3s_lb_version | default('latest') }}
         imagePullPolicy: Always
         name: kube-vip
         resources: {}
