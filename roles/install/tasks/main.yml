@@ -71,7 +71,7 @@
   ansible.builtin.set_fact:
     k3s_install_init_server: "{{ ansible_host }}"
   run_once: true
-  when: ansible_host in groups[install_controller_group]
+  when: inventory_hostname in groups[install_controller_group]
 
 - name: Ensure cluster is initialized
   ansible.builtin.wait_for:
