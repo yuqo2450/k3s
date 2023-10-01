@@ -89,7 +89,7 @@ spec:
         - name: vip_retryperiod
           value: "1"
         - name: address
-          value: "{{ install_api_ip }}"
+          value: "{{ k3s_install_api_ip }}"
         image: ghcr.io/kube-vip/kube-vip:{{ install_lb_version | default('latest') }}
         imagePullPolicy: Always
         name: kube-vip

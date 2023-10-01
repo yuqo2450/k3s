@@ -34,7 +34,7 @@ node-taint: {{ taint }}
 {% elif install_agent_group in group_names %}
 node-label: node.kubernetes.io/role=agent
 {% endif %}
-server: https://{{ install_api_ip }}:{{ install_https_port }}
+server: https://{{ k3s_install_api_ip }}:{{ install_https_port }}
 {% if install_token is defined %}
 token: {{ install_token }}
 {% endif %}

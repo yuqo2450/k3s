@@ -69,12 +69,12 @@
 
 - name: Determine cluster master
   ansible.builtin.set_fact:
-    install_api_ip: "{{ ((install_api_ip is defined) and (install_api_ip | ansible.utils.ipaddr)) | ternary(install_api_ip, ansible_host) }}"
+    k3s_install_api_ip: "{{ ((install_api_ip is defined) and (install_api_ip | ansible.utils.ipaddr)) | ternary(install_api_ip, ansible_host) }}"
   run_once: true
 
 - name: Ensure cluster is initialized
   ansible.builtin.wait_for:
-    host: "{{ install_api_ip }}"
+    host: "{{ k3s_install_api_ip }}"
     port: 6443
     state: started
     timeout: 5
@@ -89,7 +89,7 @@
 - name: Initialize cluster on master
   run_once: true
   when: cluster_initialized.changed # noqa: no-handler
-  delegate_to: "{{ (install_api_ip in install_controller_ips) | ternary(install_api_ip, ansible_host) }}"
+  delegate_to: "{{ (k3s_install_api_ip in install_controller_ips) | ternary(k3s_install_api_ip, ansible_host) }}"
   block:
     - name: Ensure init config
       ansible.builtin.template:
@@ -125,7 +125,7 @@
 
     - name: Ensure cluster is initialized
       ansible.builtin.wait_for:
-        host: "{{ install_api_ip }}"
+        host: "{{ k3s_install_api_ip }}"
         port: 6443
         state: started
         timeout: 300
@@ -134,12 +134,12 @@
   ansible.builtin.slurp:
     src: /var/lib/rancher/k3s/server/node-token
   run_once: true
-  delegate_to: "{{ (install_api_ip in install_controller_ips) | ternary(install_api_ip, ansible_host) }}"
+  delegate_to: "{{ (k3s_install_api_ip in install_controller_ips) | ternary(k3s_install_api_ip, ansible_host) }}"
   register: node_token
 
 - name: Set token
   ansible.builtin.set_fact:
-    install_token: "{{ node_token.content | b64decode }}"
+    k3s_install_token: "{{ node_token.content | b64decode }}"
 
 - name: Configure k3s
   ansible.builtin.template:
