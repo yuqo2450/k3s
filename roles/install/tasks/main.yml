@@ -32,6 +32,11 @@
         name: br_netfilter
         state: present
 
+    - name: Load kernel module overlay
+      community.general.modprobe:
+        name: overlay
+        state: present
+
 - name: Install k3s binary
   block:
     - name: Download binary
@@ -66,6 +71,15 @@
     owner: root
     group: root
     mode: '0644'
+
+# This is required to sop containerd process when stopping k3s.service
+- name: Ensure k3s-killall.sh exists
+  ansible.builtin.file:
+    src: k3s-killall.sh
+    dest: "{{ install_bin_path }}/k3s-killall.sh"
+    mode: "0755"
+    owner: root
+    group: root
 
 - name: Determine cluster k3s init server
   ansible.builtin.set_fact:
