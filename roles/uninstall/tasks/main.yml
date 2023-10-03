@@ -11,6 +11,10 @@
     - k3s_service_present.failed
     - "'Could not find the requested service' not in k3s_service_present.msg"
 
+- name: Reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: true
+
 - name: Undo prerequisites
   block:
     - name: Allow ipv4 forwarding
@@ -44,11 +48,11 @@
         state: absent
       loop: "{{ uninstall_config_dirs }}"
 
-    - name: Remove k3s binary
+    - name: Remove k3s biaries and scripts
       ansible.builtin.file:
-        path: "{{ uninstall_bin }}"
+        path: "{{ uninstall_bin_path }}/{{ item }}"
         state: absent
-        mode: '0755'
+      loop: ["k3s", "k3s-killall.sh", "k3s-{{ uninstall_version }}"]
 
     - name: Remove k3s service
       ansible.builtin.file:

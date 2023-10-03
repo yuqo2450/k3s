@@ -1,6 +1,8 @@
 ---
 # vars file for uninstall
 uninstall_config_dirs:
-  - /var/lib/rancher
-  - /etc/rancher
+  - /var/lib/rancher/k3s
+  - /var/lib/kubelet
+  - /etc/rancher/k3s
   - /run/k3s
+  - /run/flannel

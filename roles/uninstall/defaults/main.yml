@@ -1,3 +1,4 @@
 ---
 # defaults file for uninstall
-uninstall_bin: /usr/local/bin/k3s
+uninstall_version: v1.28.2
+uninstall_bin_path: /usr/local/bin
