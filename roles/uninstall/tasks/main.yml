@@ -58,3 +58,8 @@
       ansible.builtin.file:
         path: /usr/lib/systemd/system/k3s.service
         state: absent
+  rescue:
+    - name: Rerun killall script
+      ansible.builtin.command:
+        cmd: "{{ uninstall_bin_path }}/k3s-killall.sh"
+      changed_when: false
