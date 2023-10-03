@@ -166,10 +166,3 @@
     group: root
     mode: '0644'
   notify: Restart_k3s
-
-- name: Start k3s service
-  ansible.builtin.service:
-    name: k3s.service
-    state: started
-    enabled: true
-  throttle: 1
