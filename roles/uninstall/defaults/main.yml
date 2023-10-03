@@ -1,4 +1,4 @@
 ---
 # defaults file for uninstall
-uninstall_version: v1.28.2
-uninstall_bin_path: /usr/local/bin
+uninstall_version: "{{ k3s_version | default('v1.28.2') }}"
+uninstall_bin_path: "{{ k3s_bin_path | default('/usr/local/bin') }}"
