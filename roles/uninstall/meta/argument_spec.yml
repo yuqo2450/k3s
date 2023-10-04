@@ -3,7 +3,7 @@
 argument_spec:
   main:
   options:
-    bin:
+    uninstall_bin:
       desciption: Path to the k3s binary
       type: str
       required: false

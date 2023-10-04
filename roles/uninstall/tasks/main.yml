@@ -11,6 +11,14 @@
     - k3s_service_present.failed
     - "'Could not find the requested service' not in k3s_service_present.msg"
 
+- name: Run the default k3s-killall.sh script from rancher # noqa: command-instead-of-shell
+  ansible.builtin.shell: "{{ lookup('file', 'k3s-killall.sh') }}"
+  changed_when: false
+
+- name: Reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: true
+
 - name: Undo prerequisites
   block:
     - name: Allow ipv4 forwarding
@@ -42,15 +50,19 @@
       ansible.builtin.file:
         path: "{{ item }}"
         state: absent
-      loop: "{{ k3s_config_dirs }}"
+      loop: "{{ uninstall_config_dirs }}"
 
-    - name: Remove k3s binary
+    - name: Remove k3s biaries and scripts
       ansible.builtin.file:
-        path: "{{ bin }}"
+        path: "{{ uninstall_bin_path }}/{{ item }}"
         state: absent
-        mode: '0755'
+      loop: ["k3s", "k3s-{{ uninstall_version }}"]
 
     - name: Remove k3s service
       ansible.builtin.file:
         path: /usr/lib/systemd/system/k3s.service
         state: absent
+  rescue:
+    - name: Run the default k3s-killall.sh script from rancher # noqa: command-instead-of-shell
+      ansible.builtin.shell: "{{ lookup('file', 'k3s-killall.sh') }}"
+      changed_when: false

@@ -25,10 +25,10 @@ Restart=always
 RestartSec=5s
 ExecStartPre=-/sbin/modprobe br_netfilter
 ExecStartPre=-/sbin/modprobe overlay
-{% if controller_group in group_names %}
-ExecStart={{ bin_path }}/k3s server
-{% elif agent_group in group_names %}
-ExecStart={{ bin_path }}/k3s agent
+{% if install_controller_group in group_names %}
+ExecStart={{ install_bin_path }}/k3s server
+{% elif install_agent_group in group_names %}
+ExecStart={{ install_bin_path }}/k3s agent
 {% else %}
-ExecStart=echo "Host not in {{ controller_group }} or {{ agent_group }}"
+ExecStart=echo "Host not in {{ install_controller_group }} or {{ install_agent_group }}"
 {% endif %}
