@@ -11,8 +11,8 @@
     - k3s_service_present.failed
     - "'Could not find the requested service' not in k3s_service_present.msg"
 
-- name: Run the default k3s-killall.sh script from rancher
-  ansible.builtin.command: "{{ lookup('file', 'k3s-killall.sh') }}"
+- name: Run the default k3s-killall.sh script from rancher # noqa: command-instead-of-shell
+  ansible.builtin.shell: "{{ lookup('file', 'k3s-killall.sh') }}"
   changed_when: false
 
 - name: Reload systemd
@@ -63,6 +63,6 @@
         path: /usr/lib/systemd/system/k3s.service
         state: absent
   rescue:
-    - name: Run the default k3s-killall.sh script from rancher
-      ansible.builtin.command: "{{ lookup('file', 'k3s-killall.sh') }}"
+    - name: Run the default k3s-killall.sh script from rancher # noqa: command-instead-of-shell
+      ansible.builtin.shell: "{{ lookup('file', 'k3s-killall.sh') }}"
       changed_when: false
