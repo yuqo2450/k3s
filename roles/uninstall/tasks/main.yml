@@ -56,7 +56,11 @@
       ansible.builtin.file:
         path: "{{ uninstall_bin_path }}/{{ item }}"
         state: absent
+<<<<<<< HEAD
       loop: ["k3s", "k3s-{{ uninstall_version }}"]
+=======
+        mode: '0755'
+>>>>>>> main
 
     - name: Remove k3s service
       ansible.builtin.file:
