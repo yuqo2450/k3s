@@ -39,6 +39,7 @@ all:
 == Role Variables
 
 This is an overview of all variables, that can be set using this role. To all variables listed here the role prefix `install_` has to be added.
+In addition it is possible to add the `k3s_` prefix, which is a shared prefix for all k3s roles from this collection. This way it is possible to set the variables on a host level so you can install and uninstall without additional variables.
 
 .Variables that should be adjusted by the user
 [frame=none,cols="1,1,3"]
