@@ -54,6 +54,9 @@ Example playbook to install a k3s cluster while setting a loadbalancer ip for th
 
 Further documentation for each role can be found in the specific role documentation.
 
+* https://github.com/yuqo2450/ans-k3s/tree/main/roles/install[install]
+* https://github.com/yuqo2450/ans-k3s/tree/main/roles/uninstall[uninstall]
+
 == License
 
 MIT

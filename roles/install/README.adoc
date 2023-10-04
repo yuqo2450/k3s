@@ -38,7 +38,8 @@ all:
 
 == Role Variables
 
-This is an overview of all variables, that can be set using this role:
+This is an overview of all variables, that can be set using this role. To all variables listed here the role prefix `install_` has to be added.
+In addition it is possible to add the `k3s_` prefix, which is a shared prefix for all k3s roles from this collection. This way it is possible to set the variables on a host level so you can install and uninstall without additional variables.
 
 .Variables that should be adjusted by the user
 [frame=none,cols="1,1,3"]
@@ -53,6 +54,8 @@ This is an overview of all variables, that can be set using this role:
 | flannel_backend | vxlan | Backend for flannel network controller. Can only be one of [vxlan, host-gw, wireguard-native].
 | disable_components | [] | Kubernetes control plane components to disable. Available options are [cloud-controller, helm-controller, network-policy, scheduler, kube-proxy].
 | disable_addons | [] | Disable additional software that will be installed to the cluster. Available options are [coredns, traefik, local-storage, metrics-server, servicelb].
+| lb_ip | null | IP addressed to be used for kube-vip cluster loadbalancer.
+| taints | [] | Taints to be added to each node. This ist best set at a node level.
 |===
 
 .Variables that are adjusted by the developer
@@ -61,7 +64,7 @@ This is an overview of all variables, that can be set using this role:
 | Variable | Default | Description
 
 | k3s_config_dirs | [/var/lib/rancher/k3s/server/manifests, /etc/rancher/k3s/config.yaml.d] | Paths where ranchers k3s configuration can be found.
-| controller_ips | automated list of ips of the controller group | Kubernetes controller ips.
+| controller_ips | Automated list of ips of the controller group | Kubernetes controller ips.
 | lb_version | v0.6.2 | Version of kube-vip to be used for cluster load balancer.
 | svclb_version | v0.0.7 | Version of kube-vip to be used for service load balancer.
 |===

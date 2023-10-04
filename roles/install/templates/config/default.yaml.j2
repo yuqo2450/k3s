@@ -1,0 +1,44 @@
+---
+{% if install_controller_group in group_names %}
+cluster-init: false
+https-listen-port: {{ install_https_port }}
+{% if install_flannel_backend in ['none', 'vxlan', 'ipsec', 'host-gw', 'wireguard-native']%}
+flannel-backend: {{ install_flannel_backend }}
+{% else %}
+flannel-backend: vxlan
+{% endif %}
+{% for val in ['scheduler', 'cloud-controller', 'kube-proxy', 'network-policy', 'helm-controller'] %}
+{% if val in install_disable_components %}
+disable-{{ val }}: true
+{% else %}
+disable-{{ val }}: false
+{% endif %}
+{% endfor %}
+{% if install_disable_addons | length is gt 0 %}
+disable:
+{% for val in install_disable_addons %}
+  - {{ val }}
+{% endfor %}
+{% endif %}
+kubelet-arg: node-status-update-frequency=4s
+kube-controller-manager-arg: node-monitor-period=4s
+kube-controller-manager-arg: node-monitor-grace-period=16s
+# kube-controller-manager-arg: pod-eviction-timeout=20s
+kube-apiserver-arg: default-not-ready-toleration-seconds=20
+kube-apiserver-arg: default-unreachable-toleration-seconds=20
+node-label: node.kubernetes.io/role=controller
+etcd-expose-metrics: true
+{% if install_lb_ip %}
+tls-san: {{ install_lb_ip }}
+{% endif %}
+{% elif install_agent_group in group_names %}
+node-label: node.kubernetes.io/role=agent
+{% endif %}
+node-taint:
+{% for taint in install_taints %}
+  - {{ taint }}
+{% endfor %}
+server: https://{{ k3s_install_init_server }}:{{ install_https_port }}
+{% if k3s_install_token is defined %}
+token: {{ k3s_install_token }}
+{% endif %}

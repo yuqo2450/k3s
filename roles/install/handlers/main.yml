@@ -1,2 +1,9 @@
+# code: language=ansible
 ---
 # handlers file for install
+- name: Restart_k3s
+  ansible.builtin.service:
+    name: k3s.service
+    state: restarted
+    enabled: true
+  throttle: 1
