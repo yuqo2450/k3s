@@ -72,15 +72,6 @@
     group: root
     mode: '0644'
 
-# This is required to sop containerd process when stopping k3s.service
-- name: Ensure k3s-killall.sh exists
-  ansible.builtin.copy:
-    src: k3s-killall.sh
-    dest: "{{ install_bin_path }}/k3s-killall.sh"
-    mode: '0755'
-    owner: root
-    group: root
-
 - name: Determine cluster k3s init server
   ansible.builtin.set_fact:
     k3s_install_init_server: "{{ ansible_host }}"

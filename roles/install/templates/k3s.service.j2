@@ -32,4 +32,3 @@ ExecStart={{ install_bin_path }}/k3s agent
 {% else %}
 ExecStart=echo "Host not in {{ install_controller_group }} or {{ install_agent_group }}"
 {% endif %}
-ExecStop=k3s-killall.sh
