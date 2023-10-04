@@ -5,8 +5,8 @@ An ansible collection to install and uninstall k3s. This can be done by installi
 
 Roles included in this collection:
 
-- https://github.com/yuqo2450/ans-k3s/tree/main/roles/install[yuqo2450.k3s.install]
-- https://github.com/yuqo2450/ans-k3s/tree/main/roles/uninstall[yuqo2450.k3s.uninstall]
+- https://github.com/yuqo2450/k3s/tree/main/roles/install[yuqo2450.k3s.install]
+- https://github.com/yuqo2450/k3s/tree/main/roles/uninstall[yuqo2450.k3s.uninstall]
 
 == Installation
 
@@ -20,7 +20,7 @@ mkdir yuqo2450
 cd yuqo2450/
 
 # Clone git repository
-git clone https://github.com/yuqo2450/ans-k3s.git
+git clone https://github.com/yuqo2450/k3s.git
 ----
 
 Include in your playbook's directory `requriements.yml` file:
@@ -29,7 +29,7 @@ Include in your playbook's directory `requriements.yml` file:
 collections:
   - name: yuqo2450.k3s
     type: git
-    source: https://github.com/yuqo2450/ans-k3s.git
+    source: https://github.com/yuqo2450/k3s.git
     version: <specify ref>
 ----
 
@@ -54,8 +54,8 @@ Example playbook to install a k3s cluster while setting a loadbalancer ip for th
 
 Further documentation for each role can be found in the specific role documentation.
 
-* https://github.com/yuqo2450/ans-k3s/tree/main/roles/install[install]
-* https://github.com/yuqo2450/ans-k3s/tree/main/roles/uninstall[uninstall]
+* https://github.com/yuqo2450/k3s/tree/main/roles/install[install]
+* https://github.com/yuqo2450/k3s/tree/main/roles/uninstall[uninstall]
 
 == License
 
