@@ -70,10 +70,10 @@ spec:
       terminationGracePeriodSeconds: 30
       serviceAccountName: kube-vip-cloud-controller
       tolerations:
-      - key: node-role.kubernetes.io/master
-        effect: NoSchedule
-      - key: node-role.kubernetes.io/control-plane
-        effect: NoSchedule
+      - effect: NoSchedule
+        operator: Exists
+      - effect: NoExecute
+        operator: Exists
       affinity:
         nodeAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
