@@ -95,7 +95,7 @@
 - name: Initialize cluster on k3s init server
   run_once: true
   when: cluster_initialized.changed # noqa: no-handler
-  delegate_to: "{{ k3s_init_server }}"
+  delegate_to: "{{ ansible_host }}"
   block:
     - name: Ensure init config
       ansible.builtin.template:
