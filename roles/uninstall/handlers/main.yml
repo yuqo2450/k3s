@@ -1,2 +1,6 @@
+# code: language=ansible
 ---
 # handlers file for uninstall
+- name: Reboot_system
+  ansible.builtin.reboot:
+    pre_reboot_delay: 15
