@@ -38,7 +38,7 @@ node-taint:
 {% for taint in install_taints %}
   - {{ taint }}
 {% endfor %}
-server: https://{{ k3s_install_init_server }}:{{ install_https_port }}
+server: https://{{ k3s_init_server }}:{{ install_https_port }}
 {% if k3s_install_token is defined %}
 token: {{ k3s_install_token }}
 {% endif %}
