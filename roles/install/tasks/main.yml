@@ -74,13 +74,13 @@
 
 - name: Determine cluster k3s init server
   ansible.builtin.set_fact:
-    k3s_install_init_server: "{{ ansible_host }}"
+    k3s_init_server: "{{ install_lb_ip | ternary(install_lb_ip, ansible_host) }}"
   run_once: true
   when: inventory_hostname in groups[install_controller_group]
 
 - name: Ensure cluster is initialized
   ansible.builtin.wait_for:
-    host: "{{ k3s_install_init_server }}"
+    host: "{{ k3s_init_server }}"
     port: 6443
     state: started
     timeout: 5
@@ -95,7 +95,7 @@
 - name: Initialize cluster on k3s init server
   run_once: true
   when: cluster_initialized.changed # noqa: no-handler
-  delegate_to: "{{ k3s_install_init_server }}"
+  delegate_to: "{{ k3s_init_server }}"
   block:
     - name: Ensure init config
       ansible.builtin.template:
@@ -133,7 +133,7 @@
 
     - name: Ensure cluster is initialized
       ansible.builtin.wait_for:
-        host: "{{ k3s_install_init_server }}"
+        host: "{{ k3s_init_server }}"
         port: 6443
         state: started
         timeout: 300
@@ -142,7 +142,7 @@
   ansible.builtin.slurp:
     src: /var/lib/rancher/k3s/server/node-token
   run_once: true
-  delegate_to: "{{ k3s_install_init_server }}"
+  delegate_to: "{{ k3s_init_server }}"
   register: node_token
 
 - name: Set token
