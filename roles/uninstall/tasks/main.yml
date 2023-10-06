@@ -10,6 +10,7 @@
   failed_when:
     - k3s_service_present.failed
     - "'Could not find the requested service' not in k3s_service_present.msg"
+  notify: Reboot_system
 
 - name: Run the default k3s-killall.sh script from rancher # noqa: command-instead-of-shell
   ansible.builtin.shell: "{{ lookup('file', 'k3s-killall.sh') }}"
